@@ -1,10 +1,14 @@
+const { restart } = require('nodemon')
 // User API Controller
 const expressAsyncHandler = require('express-async-handler')
 // Encryption module
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 // User Model
 const User = require('../models/userModel')
-const { restart } = require('nodemon')
+
+// Colors
+const { red } = require('colors')
 
 // @desc Register a new user
 // @route /api/users
@@ -26,10 +30,9 @@ const registerUser = expressAsyncHandler(async (req, res) => {
     throw new Error('User already exists')
   }
 
-  // Has password with bcrypt
-
+  // Hash password with bcrypt
   const salt = await bcrypt.genSalt(10)
-  const hashedPassword = await bcrypt.hash(password, salt)
+  const hashedPassword = await bcrypt.hashSync(password, salt)
 
   // Create a new user
   const user = await User.create({
@@ -40,10 +43,12 @@ const registerUser = expressAsyncHandler(async (req, res) => {
 
   // Generate server response
   if(user) {
+    // 201 Created
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
+      token: generateToken(user._id)
     })
   } else {
     res.status(400)
@@ -55,8 +60,38 @@ const registerUser = expressAsyncHandler(async (req, res) => {
 // @route /api/users/login
 // @access Public
 const loginUser = expressAsyncHandler(async (req, res) => {
-  res.send('Login Route')
+
+  // Get email and password from request
+  const { email, password } = req.body
+
+  const salt = await bcrypt.genSalt(10)
+  const hashedPassword = await bcrypt.hashSync(password, salt)
+  console.log(hashedPassword);
+
+  // Check if user email exists in database
+  const user = await User.findOne({email})
+
+  // Compare user & password entered with the one in the db
+  if( user && (await bcrypt.compareSync(password, user.password))) {
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      token: generateToken(user._id)
+    })
+  } else {
+    res.status(401)
+    throw new Error('Invalid Credentials')
+  }
 })
+
+// Generate a JSON token
+const generateToken = (id) => {
+  return jwt.sign(
+    { id }, 
+    process.env.JWT_SECRET, 
+    { expiresIn: '30d'})
+}
 
 module.exports = {
   registerUser,
