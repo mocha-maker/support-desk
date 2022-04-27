@@ -1,5 +1,10 @@
 // User API Controller
 const expressAsyncHandler = require('express-async-handler')
+// Encryption module
+const bcrypt = require('bcryptjs')
+// User Model
+const User = require('../models/userModel')
+const { restart } = require('nodemon')
 
 // @desc Register a new user
 // @route /api/users
@@ -13,7 +18,37 @@ const registerUser = expressAsyncHandler(async (req, res) => {
     throw new Error('Please include all fields')
   }
 
-  res.send('Register Route')
+  // Check if user exists
+  const userExists = await User.findOne({email})
+
+  if(userExists) {
+    res.status(400)
+    throw new Error('User already exists')
+  }
+
+  // Has password with bcrypt
+
+  const salt = await bcrypt.genSalt(10)
+  const hashedPassword = await bcrypt.hash(password, salt)
+
+  // Create a new user
+  const user = await User.create({
+    name, 
+    email, 
+    password: hashedPassword
+  })
+
+  // Generate server response
+  if(user) {
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+    })
+  } else {
+    res.status(400)
+    throw new error('Invalid user data')
+  }
 })
 
 // @desc Login a  user
