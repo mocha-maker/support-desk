@@ -1,6 +1,5 @@
 // User API Controller
-import expressAsyncHandler from "express-async-handler"
-
+const expressAsyncHandler = require('express-async-handler')
 
 // @desc Register a new user
 // @route /api/users
