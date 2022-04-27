@@ -158,8 +158,8 @@ h3 {
   padding: 10px 20px;
   border: 1px solid #000;
   border-radius: 5px;
-  background: #000;
-  color: #fff;
+  background: var(--body-bg);
+  color: var(--body-text);
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
