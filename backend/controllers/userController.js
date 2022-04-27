@@ -85,6 +85,19 @@ const loginUser = expressAsyncHandler(async (req, res) => {
   }
 })
 
+// @desc Retrieve user information
+// @route /api/users/me
+// @access Private
+const getMe = expressAsyncHandler(async (req, res) => {
+  // Deconstruct user model
+  const user = {
+    id: req.user._id,
+    email: req.user.email,
+    name: req.user.name,
+  }
+  res.status(200).json(user)
+})
+
 // Generate a JSON token
 const generateToken = (id) => {
   return jwt.sign(
@@ -95,5 +108,6 @@ const generateToken = (id) => {
 
 module.exports = {
   registerUser,
-  loginUser
+  loginUser,
+  getMe,
 }
