@@ -9,6 +9,7 @@ function Header() {
       </div>
       <ul>
         <li>
+          {/* TODO: Add Signout toggle */}
           <Link to='/login'>
             <FaSignInAlt/>
             Login
