@@ -7,6 +7,7 @@ import { register, reset } from '../context/auth/authSlice'
 // Components
 import { FaUser, FaEye } from 'react-icons/fa'
 import { toast } from 'react-toastify'
+import Spinner from '../components/Spinner'
 
 function Register() {
   // State
@@ -43,7 +44,7 @@ function Register() {
     }
 
     dispatch(reset())
-  })
+  }, [isError, isSuccess, user, message, navigate, dispatch])
 
   // Update state on form data entry
   const onChange = (e) => {
@@ -69,6 +70,10 @@ function Register() {
 
       dispatch(register(userData))
     }
+  }
+
+  if (isLoading) {
+    return <Spinner />
   }
 
   return (
