@@ -11,6 +11,10 @@ function Register() {
     password2: '',
   })
 
+  // Toggle password visibility
+  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword2, setShowPassword2] = useState(false)
+
   // destructure formData
   const { name, email, password, password2 } = formData
 
@@ -66,7 +70,7 @@ function Register() {
           </div>
           <div className='form-group'>
             <input
-              type='password'
+              type={showPassword ? 'text' : 'password'}
               className='form-control'
               id='password'
               name='password'
@@ -75,11 +79,19 @@ function Register() {
               placeholder='Enter your password'
               required
             />
-            <FaEye className='' />
+            <FaEye
+              alt='show password'
+              className='password-visibility-icon'
+              size={50}
+              style={showPassword ? { opacity: '1' } : { opacity: '0.3' }}
+              onClick={(e) => {
+                setShowPassword((prevState) => !prevState)
+              }}
+            />
           </div>
           <div className='form-group'>
             <input
-              type='password'
+              type={showPassword2 ? 'text' : 'password'}
               className='form-control'
               id='password2'
               name='password2'
@@ -87,6 +99,15 @@ function Register() {
               onChange={onChange}
               placeholder='Enter your password again'
               required
+            />
+            <FaEye
+              alt='show password'
+              className='password-visibility-icon'
+              size={50}
+              style={showPassword2 ? { opacity: '1' } : { opacity: '0.3' }}
+              onClick={(e) => {
+                setShowPassword2((prevState) => !prevState)
+              }}
             />
           </div>
           <div className='form-group'>

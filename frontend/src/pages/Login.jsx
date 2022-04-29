@@ -9,6 +9,9 @@ function Login() {
     password: '',
   })
 
+  // Toggle password visibility
+  const [showPassword, setShowPassword] = useState(false)
+
   // destructure formData
   const { email, password } = formData
 
@@ -52,7 +55,7 @@ function Login() {
           </div>
           <div className='form-group'>
             <input
-              type='password'
+              type={showPassword ? 'text' : 'password'}
               className='form-control'
               id='password'
               name='password'
@@ -61,7 +64,15 @@ function Login() {
               placeholder='Enter your password'
               required
             />
-            <FaEye className='' />
+            <FaEye
+              alt='show password'
+              className='password-visibility-icon'
+              size={50}
+              style={showPassword ? { opacity: '1' } : { opacity: '0.5' }}
+              onClick={(e) => {
+                setShowPassword((prevState) => !prevState)
+              }}
+            />
           </div>
           <div className='form-group'>
             <button className='btn btn-block'>Sign In</button>
