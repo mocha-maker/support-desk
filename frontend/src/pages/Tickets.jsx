@@ -1,4 +1,57 @@
+import { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { getTickets, reset } from '../context/tickets/ticketSlice'
+
+// Components
+import Spinner from '../components/Spinner'
+import BackButton from '../components/BackButton'
+import { toast } from 'react-toastify'
+import TicketItem from '../components/TicketItem'
+
 function Tickets() {
-  return <div>Tickets</div>
+  const { tickets, isLoading, isSuccess, isError, message } = useSelector(
+    (state) => state.tickets
+  )
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(getTickets())
+  }, [dispatch])
+
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(reset())
+    }
+
+    if (isError) {
+      toast.error(message)
+      dispatch(reset())
+    }
+  }, [dispatch, isSuccess, isError, message])
+
+  if (isLoading) {
+    return <Spinner />
+  }
+
+  return (
+    <>
+      <BackButton url='/' />
+      <section className='heading'>
+        <h2>Tickets</h2>
+        <p>See all your tickets.</p>
+      </section>
+      <section className='tickets'></section>
+      <div className='ticket-headings'>
+        <div>Date</div>
+        <div>Product</div>
+        <div>Status</div>
+        <div></div>
+      </div>
+      {tickets.map((ticket) => (
+        <TicketItem key={ticket._id} ticket={ticket}></TicketItem>
+      ))}
+    </>
+  )
 }
 export default Tickets

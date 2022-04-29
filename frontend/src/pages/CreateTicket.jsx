@@ -22,7 +22,7 @@ function CreateTicket() {
 
   // get ticket context
   const { isLoading, isSuccess, isError, message } = useSelector(
-    (state) => state.ticket
+    (state) => state.tickets
   )
 
   useEffect(() => {
@@ -30,7 +30,7 @@ function CreateTicket() {
       toast.error(message)
     }
 
-    // Redirect on successful registration or is logged in
+    // Redirect on successful ticket creation
     if (isSuccess) {
       toast.success('New Ticket Created')
       navigate('/tickets')
