@@ -1,4 +1,9 @@
+// Utilities
 import { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { register } from '../context/auth/authSlice'
+
+// Components
 import { FaUser, FaEye } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 
@@ -18,6 +23,14 @@ function Register() {
   // destructure formData
   const { name, email, password, password2 } = formData
 
+  const dispatch = useDispatch()
+
+  // get auth context
+  const { user, isLoading, isSuccess, message } = useSelector(
+    (state) => state.auth
+  )
+
+  // Update state on form data entry
   const onChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
@@ -25,12 +38,21 @@ function Register() {
     }))
   }
 
+  // Register User on Submit
   const onSubmit = (e) => {
     e.preventDefault()
 
     // Validate password match
     if (password !== password2) {
       toast.error('Passwords do not match')
+    } else {
+      const userData = {
+        name,
+        email,
+        password,
+      }
+
+      dispatch(register(userData))
     }
   }
 
@@ -58,7 +80,7 @@ function Register() {
           </div>
           <div className='form-group'>
             <input
-              type='text'
+              type='email'
               className='form-control'
               id='email'
               name='email'
@@ -78,6 +100,7 @@ function Register() {
               onChange={onChange}
               placeholder='Enter your password'
               required
+              autoComplete='new-password'
             />
             <FaEye
               alt='show password'
@@ -99,6 +122,7 @@ function Register() {
               onChange={onChange}
               placeholder='Enter your password again'
               required
+              autoComplete='new-password'
             />
             <FaEye
               alt='show password'

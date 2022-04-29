@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 const initialState = {
-  user: null,
+  user: 'null',
   // Statuses and messages from server
   isError: false, 
   isSuccess: false,
@@ -9,12 +9,25 @@ const initialState = {
   message: '',
 }
 
+// Register a new user
+export const register = createAsyncThunk('auth/register',
+  async (user, thunkAPI) => {
+  console.log(user);
+})
+
+// Login an existing user
+export const login = createAsyncThunk('auth/login',
+  async (user, thunkAPI) => {
+  console.log(user);
+})
+
+
 export const authSlice = createSlice ({
   name: 'auth',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // Used add cases / functions
+    // Used add cases / actions
   }
 })
 

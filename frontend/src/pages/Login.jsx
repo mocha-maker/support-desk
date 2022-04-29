@@ -1,4 +1,9 @@
+// Utilities
 import { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { login } from '../context/auth/authSlice'
+
+// Components
 import { FaSignInAlt, FaEye } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 
@@ -15,6 +20,8 @@ function Login() {
   // destructure formData
   const { email, password } = formData
 
+  const dispatch = useDispatch()
+
   const onChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
@@ -26,9 +33,12 @@ function Login() {
     e.preventDefault()
 
     // Validate credentials
-    if (!password) {
-      toast.error('Invalid Credentials')
+    const userData = {
+      email,
+      password,
     }
+
+    dispatch(login(userData))
   }
 
   return (
@@ -43,7 +53,7 @@ function Login() {
         <form onSubmit={onSubmit}>
           <div className='form-group'>
             <input
-              type='text'
+              type='email'
               className='form-control'
               id='email'
               name='email'
@@ -63,6 +73,7 @@ function Login() {
               onChange={onChange}
               placeholder='Enter your password'
               required
+              autoComplete='current-password'
             />
             <FaEye
               alt='show password'
