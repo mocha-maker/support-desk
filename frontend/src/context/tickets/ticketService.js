@@ -38,7 +38,7 @@ const getTickets = async (token) => {
   return response.data
 }
 
-// Get all user's tickets from the server
+// Get a ticket from the server
 const getTicket = async (ticketId, token) => {
   const config = {
     headers: {
