@@ -15,7 +15,7 @@ const noteSchema = mongoose.Schema({
     required: true,
     ref: 'Ticket', // Object reference see database collection name
   },
-  isStagg: {
+  isStaff: {
     type: Boolean,
     default: false,
   }
