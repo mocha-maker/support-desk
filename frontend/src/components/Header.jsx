@@ -2,6 +2,7 @@ import {FaSignInAlt, FaSignOutAlt, FaUser} from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { logout, reset } from '../context/auth/authSlice'
+import { toast } from 'react-toastify'
 
 function Header() {
   const navigate = useNavigate()
@@ -12,6 +13,7 @@ function Header() {
     dispatch(logout())
     dispatch(reset())
     navigate('/')
+    toast.success('Logged Out')
   }
 
   return (

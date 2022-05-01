@@ -277,7 +277,7 @@ h3 {
 }
 
 .status-closed {
-  background-color: darkred;
+  background-color: #333;
   color: #fff;
   border-radius: 10px;
 }
@@ -285,6 +285,7 @@ h3 {
 .ticket-page {
   position: relative;
   text-align: left;
+  padding-bottom: 2vh;
 }
 
 .ticket-page h2 {

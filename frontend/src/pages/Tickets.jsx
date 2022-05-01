@@ -39,18 +39,28 @@ function Tickets() {
       <BackButton url='/' />
       <section className='heading'>
         <h2>Tickets</h2>
-        <p>See all your tickets.</p>
+        <p>Your tickets dashboard.</p>
       </section>
       <section className='tickets'></section>
-      <div className='ticket-headings'>
-        <div>Date</div>
-        <div>Product</div>
-        <div>Status</div>
-        <div></div>
-      </div>
-      {tickets.map((ticket) => (
-        <TicketItem key={ticket._id} ticket={ticket}></TicketItem>
-      ))}
+
+      {tickets.length > 0 ? (
+        <>
+          <div className='ticket-headings'>
+            <div>Date</div>
+            <div>Product</div>
+            <div>Status</div>
+            <div></div>
+          </div>
+          {tickets.map((ticket) => (
+            <TicketItem key={ticket._id} ticket={ticket}></TicketItem>
+          ))}
+        </>
+      ) : (
+        <div>
+          You have no tickets! First{' '}
+          <a href='/create-ticket'>create a new ticket</a>.
+        </div>
+      )}
     </>
   )
 }

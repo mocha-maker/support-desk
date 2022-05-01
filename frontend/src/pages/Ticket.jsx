@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { getTicket, reset } from '../context/tickets/ticketSlice'
+import { getTicket, reset, closeTicket } from '../context/tickets/ticketSlice'
 
 // Components
 import Spinner from '../components/Spinner'
@@ -14,6 +14,7 @@ function Ticket() {
   )
   const params = useParams()
   const { ticketId } = params
+  const { _id, status, product, description, createdAt } = ticket
 
   const dispatch = useDispatch()
 
@@ -32,6 +33,14 @@ function Ticket() {
     }
   }, [dispatch, isSuccess, isError, message])
 
+  const onCloseTicket = (e) => {
+    // Confirmation window
+    if (window.confirm('Are you sure you want to close this ticket?')) {
+      dispatch(closeTicket(_id))
+      toast.info('Ticket closed')
+    }
+  }
+
   if (isLoading) {
     return <Spinner />
   }
@@ -45,20 +54,25 @@ function Ticket() {
       <header className='ticket-header'>
         <BackButton url='/tickets' />
         <h2>
-          Ticket ID: {ticket._id}
-          <span className={`status status-${ticket.status.toLowerCase()}`}>
-            {ticket.status}
+          Ticket ID: {_id}
+          <span className={`status status-${status.toLowerCase()}`}>
+            {status}
           </span>
         </h2>
         <h3>
-          Date Submitted:{' '}
-          {new Date(ticket.createdAt).toLocaleDateString('en-US')}
+          Date Submitted: {new Date(createdAt).toLocaleDateString('en-US')}
         </h3>
+        <h3>Product: {product}</h3>
         <hr />
         <div className='ticket-desc'>
           <h3>Description of Issue</h3>
-          <p>{ticket.description}</p>
+          <p>{description}</p>
         </div>
+        {status !== 'Closed' && (
+          <button className='btn btn-danger btn-block' onClick={onCloseTicket}>
+            Close Ticket
+          </button>
+        )}
       </header>
     </div>
   )

@@ -39,6 +39,9 @@ function Login() {
     // Redirect on successful login
     if (isSuccess || user) {
       navigate('/')
+      toast.success(`Logged in as ${user.name}`, {
+        toastId: 'loginToast',
+      })
     }
 
     dispatch(reset())
