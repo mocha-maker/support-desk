@@ -11,13 +11,13 @@ const initialState = {
 }
 
 // Create a new note
-export const createNote = createAsyncThunk('note/createNote',
-  async (noteData, thunkAPI) => {
+export const createNote = createAsyncThunk('notes/createNote',
+  async ({ ticketId, noteContent }, thunkAPI) => {
     try {
       // fetch user token to access private route
       const token = thunkAPI.getState().auth.user.token
 
-      return await noteService.createNote(noteData, token)
+      return await noteService.createNote(ticketId, noteContent, token)
 
     } catch (error) {
       const message = (error.response && error.response.data && error.response.data.message)
@@ -29,7 +29,7 @@ export const createNote = createAsyncThunk('note/createNote',
 )
 
 // Get all notes for a ticket
-export const getNotes = createAsyncThunk('note/getNotes',
+export const getNotes = createAsyncThunk('notes/getNotes',
   async (ticketId, thunkAPI) => {
     try {
       // fetch user token to access private route
@@ -70,9 +70,10 @@ export const noteSlice = createSlice ({
         state.isError = true
         state.message = action.payload
       })
-      .addCase(createNote.fulfilled, (state) => {
+      .addCase(createNote.fulfilled, (state, action) => {
         state.isLoading = false
         state.isSuccess = true
+        state.notes.push(action.payload)
       })
       .addCase(getNotes.fulfilled, (state, action) => {
         state.isLoading = false

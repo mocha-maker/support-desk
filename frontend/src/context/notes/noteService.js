@@ -3,14 +3,13 @@ import axios from 'axios'
 const API_URL = '/api/tickets/'
 
 // Create a new note on server
-const createNote = async (noteData, token) => {
-  const ticketId = noteData.ticketId
+const createNote = async (ticketId, noteContent, token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     }
   }
-  const response = await axios.post(API_URL + `${ticketId}/notes`, noteData, config)
+  const response = await axios.post(API_URL + `${ticketId}/notes`, {content: noteContent}, config)
 
   return response.data
 }
