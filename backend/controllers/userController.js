@@ -1,4 +1,3 @@
-const { restart } = require('nodemon')
 // User API Controller
 const expressAsyncHandler = require('express-async-handler')
 // Encryption module
@@ -6,9 +5,6 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 // User Model
 const User = require('../models/userModel')
-
-// Colors
-const { red } = require('colors')
 
 // @desc Register a new user
 // @route /api/users
