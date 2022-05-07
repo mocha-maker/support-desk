@@ -10,13 +10,12 @@ const Ticket = require('../models/ticketModel')
 // @access Private
 const createTicket = expressAsyncHandler(async (req, res) => {
   const { product, description } = req.body
-  
+
   if (!product || !description) {
     res.status(400)
-    throw new Error ('Please add a product and description')
+    throw new Error('Please add a product and description')
   }
 
-  // TODO: Refactor get user function
   // Get user from JWT id
   const user = await User.findById(req.user.id)
 
@@ -25,11 +24,11 @@ const createTicket = expressAsyncHandler(async (req, res) => {
     throw new Error('User not found')
   }
 
-  const ticket = await Ticket.create({ 
+  const ticket = await Ticket.create({
     product,
     description,
     user: req.user.id,
-   })
+  })
 
   res.status(201).json(ticket)
 })
@@ -45,8 +44,13 @@ const getTickets = expressAsyncHandler(async (req, res) => {
     res.status(401)
     throw new Error('User not found')
   }
+  let tickets
 
-  const tickets = await Ticket.find({ user: req.user.id })
+  if (req.user.isAdmin) {
+    tickets = await Ticket.find()
+  } else {
+    tickets = await Ticket.find({ user: req.user.id })
+  }
 
   res.status(200).json(tickets)
 })
@@ -65,14 +69,14 @@ const getTicket = expressAsyncHandler(async (req, res) => {
   }
 
   const ticket = await Ticket.findById(req.params.id)
-  
+
   if (!ticket) {
     res.status(404)
     throw new Error('Ticket not found')
   }
 
-  // Check if user owns ticket
-  if (ticket.user.toString() !== req.user.id) {
+  // Check if user owns ticket or is not an admin
+  if (ticket.user.toString() !== req.user.id && !req.user.isAdmin) {
     res.status(401)
     throw new Error('Not Authorized')
   }
@@ -94,24 +98,23 @@ const updateTicket = expressAsyncHandler(async (req, res) => {
   }
 
   const ticket = await Ticket.findById(req.params.id)
-  
+
   if (!ticket) {
     res.status(404)
     throw new Error('Ticket not found')
   }
 
   // Check if user owns ticket
-  if (ticket.user.toString() !== req.user.id) {
+  if (ticket.user.toString() !== req.user.id && !req.user.isAdmin) {
     res.status(401)
     throw new Error('Not Authorized')
   }
 
-  const updatedTicket = await Ticket
-    .findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    )
+  const updatedTicket = await Ticket.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true }
+  )
 
   res.status(200).json(updatedTicket)
 })

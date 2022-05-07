@@ -37,12 +37,19 @@ function Login() {
     }
 
     // Redirect on successful login
+    if (user && user.isStaff) {
+      navigate('/admin')
+      toast.success(`Logged in as ${user.name}`, {
+        toastId: 'loginToast',
+      })
+    }
     if (isSuccess || user) {
       navigate('/')
       toast.success(`Logged in as ${user.name}`, {
         toastId: 'loginToast',
       })
     }
+
 
     dispatch(reset())
   }, [isError, isSuccess, user, message, navigate, dispatch])

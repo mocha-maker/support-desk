@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { getTickets, reset } from '../context/tickets/ticketSlice'
+import { getTickets, reset, clear } from '../context/tickets/ticketSlice'
 
 // Components
 import Spinner from '../components/Spinner'
@@ -9,6 +9,7 @@ import { toast } from 'react-toastify'
 import TicketItem from '../components/TicketItem'
 
 function Tickets() {
+  const { user } = useSelector((state) => state.auth)
   const { tickets, isLoading, isSuccess, isError, message } = useSelector(
     (state) => state.tickets
   )
@@ -16,8 +17,10 @@ function Tickets() {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    dispatch(clear())
     dispatch(getTickets())
-  }, [dispatch])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     if (isSuccess) {
@@ -49,6 +52,7 @@ function Tickets() {
             <div>Date</div>
             <div>Product</div>
             <div>Status</div>
+            {user.isAdmin && <div>Customer</div>}
             <div></div>
           </div>
           {tickets.map((ticket) => (

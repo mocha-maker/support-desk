@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 // User Model
 const User = require('../models/userModel')
+const { use } = require('express/lib/router')
 
 // @desc Register a new user
 // @route /api/users
@@ -19,9 +20,9 @@ const registerUser = expressAsyncHandler(async (req, res) => {
   }
 
   // Check if user exists
-  const userExists = await User.findOne({email})
+  const userExists = await User.findOne({ email })
 
-  if(userExists) {
+  if (userExists) {
     res.status(400)
     throw new Error('User already exists')
   }
@@ -32,19 +33,19 @@ const registerUser = expressAsyncHandler(async (req, res) => {
 
   // Create a new user
   const user = await User.create({
-    name, 
-    email, 
-    password: hashedPassword
+    name,
+    email,
+    password: hashedPassword,
   })
 
   // Generate server response
-  if(user) {
+  if (user) {
     // 201 Created
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
-      token: generateToken(user._id)
+      token: generateToken(user._id),
     })
   } else {
     res.status(400)
@@ -56,24 +57,24 @@ const registerUser = expressAsyncHandler(async (req, res) => {
 // @route /api/users/login
 // @access Public
 const loginUser = expressAsyncHandler(async (req, res) => {
-
   // Get email and password from request
   const { email, password } = req.body
 
   const salt = await bcrypt.genSalt(10)
   const hashedPassword = await bcrypt.hashSync(password, salt)
-  console.log(hashedPassword);
+  console.log(hashedPassword)
 
   // Check if user email exists in database
-  const user = await User.findOne({email})
+  const user = await User.findOne({ email })
 
   // Compare user & password entered with the one in the db
-  if( user && (await bcrypt.compareSync(password, user.password))) {
+  if (user && (await bcrypt.compareSync(password, user.password))) {
     res.status(200).json({
       _id: user._id,
       name: user.name,
       email: user.email,
-      token: generateToken(user._id)
+      isAdmin: user.isAdmin,
+      token: generateToken(user._id),
     })
   } else {
     res.status(401)
@@ -94,16 +95,31 @@ const getMe = expressAsyncHandler(async (req, res) => {
   res.status(200).json(user)
 })
 
+// @desc Retrieve a user
+// @route /api/users/:userId
+// @access Private
+const getUserById = expressAsyncHandler(async (req, res) => {
+  // Deconstruct user model
+  const user = await User.findById(req.params.userId)
+  console.log('User: ' + req.user._id + ' Requests user ' + req.params.userId)
+
+  // Check if user is the one logged in or is not an admin
+  if (req.params.userId != req.user._id && !req.user.isAdmin) {
+    res.status(401)
+    throw new Error('Not Authorized')
+  }
+
+  res.status(200).json(user)
+})
+
 // Generate a JSON token
 const generateToken = (id) => {
-  return jwt.sign(
-    { id }, 
-    process.env.JWT_SECRET, 
-    { expiresIn: '30d'})
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' })
 }
 
 module.exports = {
   registerUser,
   loginUser,
   getMe,
+  getUserById,
 }

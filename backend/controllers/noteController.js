@@ -11,10 +11,10 @@ const Note = require('../models/noteModel')
 // @access Private
 const createNote = expressAsyncHandler(async (req, res) => {
   const { content } = req.body
-  
+
   if (!content) {
     res.status(400)
-    throw new Error ('Please add note content')
+    throw new Error('Please add note content')
   }
 
   // TODO: Refactor get user function
@@ -29,12 +29,12 @@ const createNote = expressAsyncHandler(async (req, res) => {
     throw new Error('User not found')
   }
 
-  const note = await Note.create({ 
+  const note = await Note.create({
     content,
     user: req.user.id,
     ticket: req.params.ticketId,
-    isStaff: false,
-   })
+    isStaff: req.user.isAdmin,
+  })
 
   res.status(201).json(note)
 })
@@ -59,12 +59,12 @@ const getNotes = expressAsyncHandler(async (req, res) => {
   }
 
   // Check if user owns ticket
-  if (ticket.user.toString() !== req.user.id) {
+  if (ticket.user.toString() !== req.user.id && !req.user.isAdmin) {
     res.status(401)
     throw new Error('Not Authorized')
   }
 
-  const notes = await Note.find({ticket: req.params.ticketId})
+  const notes = await Note.find({ ticket: req.params.ticketId })
 
   res.status(200).json(notes)
 })

@@ -84,30 +84,46 @@ export const getTicket = createAsyncThunk('ticket/getTicket',
   }
 )
 
-export const ticketSlice = createSlice ({
+export const ticketSlice = createSlice({
   name: 'ticket',
   initialState,
   reducers: {
-    // Reset auth state after function calls
+    // Reset state after function calls
     reset: (state) => {
       state.isLoading = false
       state.isError = false
       state.isSuccess = false
       state.message = ''
-    }
+    },
+    clear: (state) => {
+      state.tickets = []
+      state.ticket = {}
+    },
   },
   extraReducers: (builder) => {
     // add cases / actions
 
     builder
-      .addCase(createTicket.pending || getTickets.pending || getTicket.pending || closeTicket.pending, (state) => {
-        state.isLoading = true
-      })
-      .addCase(getTickets.rejected || createTicket.rejected || getTicket.rejected || closeTicket.rejected, (state, action) => {
-        state.isLoading = false
-        state.isError = true
-        state.message = action.payload
-      })
+      .addCase(
+        createTicket.pending ||
+          getTickets.pending ||
+          getTicket.pending ||
+          closeTicket.pending,
+        (state) => {
+          state.isLoading = true
+        }
+      )
+      .addCase(
+        getTickets.rejected ||
+          createTicket.rejected ||
+          getTicket.rejected ||
+          closeTicket.rejected,
+        (state, action) => {
+          state.isLoading = false
+          state.isError = true
+          state.message = action.payload
+        }
+      )
       .addCase(createTicket.fulfilled, (state) => {
         state.isLoading = false
         state.isSuccess = true
@@ -127,8 +143,8 @@ export const ticketSlice = createSlice ({
         state.isSuccess = true
         state.ticket = action.payload
       })
-  }
+  },
 })
 
-export const {reset} = ticketSlice.actions
+export const { reset, clear } = ticketSlice.actions
 export default ticketSlice.reducer
